@@ -393,7 +393,10 @@ public class Camera extends BaseCamera implements View.OnClickListener,
     private void initializeZoom() {
         if (!mParameters.isZoomSupported()) return;
 
-        mZoomMax = mParameters.getMaxZoom();
+        /*
+        	Max zoom value can not be more than zoomRatios.
+         */
+	      mZoomMax = mParameters.getZoomRatios().size() -1;
         mSmoothZoomSupported = mParameters.isSmoothZoomSupported();
         mGestureDetector = new GestureDetector(this, new ZoomGestureListener());
 
@@ -1849,7 +1852,10 @@ public class Camera extends BaseCamera implements View.OnClickListener,
         * preview size/picture resolution
         */
         mParameters = mCameraDevice.getParameters();
-        mZoomMax = mParameters.getMaxZoom();
+        /*
+        	Max zoom value can not be more than zoomRatios.
+         */
+	    mZoomMax = mParameters.getZoomRatios().size() -1;
     }
 
     private void stopPreview() {
