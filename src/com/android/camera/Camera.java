@@ -647,7 +647,12 @@ public class Camera extends BaseCamera implements View.OnClickListener,
                     mHandler.sendEmptyMessageDelayed(RESTART_PREVIEW, delay);
                 }
             }
-            mImageCapture.storeImage(jpegData, camera, mLocation);
+
+            if(jpegData != null) {
+                mImageCapture.storeImage(jpegData, camera, mLocation);
+            } else {
+                Log.e(TAG, "null jpeg data, not storing");
+            }
 
             // Calculate this in advance of each shot so we don't add to shutter
             // latency. It's true that someone else could write to the SD card in
@@ -2047,7 +2052,7 @@ public class Camera extends BaseCamera implements View.OnClickListener,
         String jpegQuality = mPreferences.getString(
                 CameraSettings.KEY_JPEG_QUALITY,
                 getString(R.string.pref_camera_jpegquality_default));
-        mParameters.setJpegQuality(JpegEncodingQualityMappings.getQualityNumber(jpegQuality));
+        mParameters.setJpegQuality(JpegEncodingQualityMappings.getQualityNumber(mCameraId, jpegQuality));
 
 
 
@@ -2532,12 +2537,12 @@ class JpegEncodingQualityMappings {
 
     // Retrieve and return the Jpeg encoding quality number
     // for the given quality level.
-    public static int getQualityNumber(String jpegQuality) {
+    public static int getQualityNumber(int mCameraId, String jpegQuality) {
         Integer quality = mHashMap.get(jpegQuality);
         if (quality == null) {
             Log.w(TAG, "Unknown Jpeg quality: " + jpegQuality);
             return DEFAULT_QUALITY;
         }
-        return CameraProfile.getJpegEncodingQualityParameter(quality.intValue());
+        return CameraProfile.getJpegEncodingQualityParameter(mCameraId, quality.intValue());
     }
 }
