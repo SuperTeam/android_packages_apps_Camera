@@ -102,6 +102,8 @@ public class CameraSettings {
     private static boolean mSamsungSpecialSettings; // slow_ae and video_recording_gamma
     private static boolean mIsOMAP4Camera;
 
+    private static boolean sFocusCamcorderAtStart = true;
+
     public static final String FOCUS_MODE_TOUCH = "touch";
 
     public CameraSettings(Activity activity, Parameters parameters,
@@ -111,6 +113,8 @@ public class CameraSettings {
         mCameraInfo = cameraInfo;
         mCameraId = cameraId;
         mIsOMAP4Camera = mContext.getResources().getBoolean(R.bool.isOMAP4Camera);
+        sFocusCamcorderAtStart = mContext.getResources().getBoolean(
+                R.bool.focusCamcorderAtStart);
     }
 
     public PreferenceGroup getPreferenceGroup(int preferenceRes) {
@@ -289,7 +293,7 @@ public class CameraSettings {
         sTouchFocusParameter = mContext.getResources().getString(R.string.touchFocusParameter);
         sTouchFocusNeedsRect = mContext.getResources().getBoolean(R.bool.touchFocusNeedsRect);
 
-        if (sTouchFocusParameter != null) {
+        if (sTouchFocusParameter != null && sTouchFocusParameter.length() != 0) {
             return true;
         } else {
             return false;
@@ -572,6 +576,7 @@ public class CameraSettings {
             params.set("cam_mode", on ? "1" : "0");
         } else if (mIsOMAP4Camera) {
             params.set("mode", on ? "video-mode" : "high-quality");
+            params.set("sei-encoding-type", "sei_enc_2010");
         }
 
         if (on && params.get("focus-mode-values").indexOf("continuous-video") != -1) {
@@ -626,6 +631,10 @@ public class CameraSettings {
         // reset to 3264x2448x15 when attempting Full HD recording.
         params.setPreviewSize(1280, 720); 
         params.set("preview-frame-rate", "30"); 
+    }
+
+    public static boolean isCamcoderFocusAtStart() {
+        return sFocusCamcorderAtStart;
     }
 
 }

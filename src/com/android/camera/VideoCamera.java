@@ -699,6 +699,8 @@ public class VideoCamera extends BaseCamera
         }
         keepScreenOnAwhile();
 
+        changeHeadUpDisplayState();
+
         /* Postpone the non-critical functionality till after the
          * activity is displayed, so that the camera frames are
          * displayed sooner on the screen.*/
@@ -724,8 +726,6 @@ public class VideoCamera extends BaseCamera
                 showStorageHint();
             }
         }, 200);
-
-        changeHeadUpDisplayState();
 
         updateThumbnailButton();
     }
@@ -769,7 +769,9 @@ public class VideoCamera extends BaseCamera
             throw new RuntimeException("startPreview failed", ex);
         }
 
-        mCameraDevice.autoFocus(null);
+        if (CameraSettings.isCamcoderFocusAtStart()) {
+            mCameraDevice.autoFocus(null);
+        }
     }
 
     private void closeCamera() {
@@ -1332,7 +1334,9 @@ public class VideoCamera extends BaseCamera
             return;
         }
 
-        mCameraDevice.autoFocus(null);
+        if (CameraSettings.isCamcoderFocusAtStart()) {
+            mCameraDevice.autoFocus(null);
+        }
         CameraSettings.setContinuousAf(mParameters, true);
         setCameraHardwareParameters();
 
