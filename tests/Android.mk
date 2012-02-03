@@ -1,3 +1,4 @@
+ifneq $(CAMERA_SKIP_TEST), true)
 LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
@@ -14,5 +15,4 @@ LOCAL_PACKAGE_NAME := CameraTests
 LOCAL_INSTRUMENTATION_FOR := Camera
 
 include $(BUILD_PACKAGE)
-
-
+endif
