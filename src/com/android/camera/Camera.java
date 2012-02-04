@@ -124,6 +124,11 @@ public class Camera extends BaseCamera implements View.OnClickListener,
     private static final int ZOOM_START = 1;
     private static final int ZOOM_STOPPING = 2;
 
+    // Property that indicates that the device screen is rotated by default
+    // Necesary to adjust the rotation of pictures/movies (0, 90, 180, 270)
+    private static final int mDeviceScreenRotation =
+       SystemProperties.getInt("ro.device.screenrotation", 0);
+
     private int mZoomState = ZOOM_STOPPED;
     private boolean mSmoothZoomSupported = false;
     private int mZoomValue;  // The current zoom value.
@@ -801,7 +806,7 @@ public class Camera extends BaseCamera implements View.OnClickListener,
             if (mCameraDevice == null) {
                 return;
             }
-
+Log.d(TAG, "empezamos a depurar");
             capture();
         }
 
@@ -818,6 +823,7 @@ public class Camera extends BaseCamera implements View.OnClickListener,
 
             // See android.hardware.Camera.Parameters.setRotation for
             // documentation.
+            Log.d(TAG, "miramos la rotación");
             int rotation = 0;
             if (mOrientation != OrientationEventListener.ORIENTATION_UNKNOWN) {
                 CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
@@ -825,10 +831,12 @@ public class Camera extends BaseCamera implements View.OnClickListener,
                         info.orientation != 90) {
                     rotation = (info.orientation - mOrientation + 360) % 360;
                 } else {  // back-facing camera (or acting like it)
-                    rotation = (info.orientation + mOrientation) % 360;
+                    rotation = (info.orientation + mOrientation - mDeviceScreenRotation ) % 360;
                 }
             }
             mParameters.setRotation(rotation);
+            
+            Log.d(TAG, "Gestionamos el GPS");
 
             // Clear previous GPS location from the parameters.
             mParameters.removeGpsData();
@@ -865,6 +873,8 @@ public class Camera extends BaseCamera implements View.OnClickListener,
                     loc = null;
                 }
             }
+            
+            Log.d(TAG, "ahora a por los parámetros");
 
             mCameraDevice.setParameters(mParameters);
 
@@ -872,6 +882,8 @@ public class Camera extends BaseCamera implements View.OnClickListener,
             Size pictureSize = mParameters.getPictureSize();
             mImageWidth = pictureSize.width;
             mImageHeight = pictureSize.height;
+            
+            Log.d(TAG, "patata");
             mCameraDevice.takePicture(mShutterCallback, mRawPictureCallback,
                     mPostViewPictureCallback, new JpegPictureCallback(loc));
             mPreviewing = false;

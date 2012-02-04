@@ -1,4 +1,4 @@
-ifneq $(CAMERA_SKIP_TEST), true)
+ifneq $(CAMERA_SKIP_TESTS), true)
 LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
