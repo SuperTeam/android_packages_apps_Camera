@@ -49,6 +49,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.MessageQueue;
+import android.os.SystemProperties;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
